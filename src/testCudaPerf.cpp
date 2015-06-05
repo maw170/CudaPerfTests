@@ -98,15 +98,14 @@ int optimizeGPULib(){
 	//Declare sizes
 	size_t arrSize = sizeof(double) * cols * rows;
 	size_t sumSize = sizeof(double) * rows;	
-	//Allocate memory on Host
-	//gpuErr(cudaMalloc(&dev_arr, arrSize));
-	//gpuErr(cudaMalloc(&dev_rowSum, sumSize));
-	thrust::device_vector <double> dev_arr = arr;
-	thrust::device_vector <double> dev_colSum = colSum;
 
+	//Allocate memory on Host
+	gpuErr(cudaMalloc(&dev_arr, arrSize));
+	gpuErr(cudaMalloc(&dev_rowSum, sumSize));
+	
 	//Copy memory over to host
-	//gpuErr(cudaMemcpy(dev_arr, arr, arrSize, cudaMemcpyHostToDevice));
-	//gpuErr(cudaMemcpy(dev_rowSum, &rowSum, sumSize, cudaMemcpyHostToDevice));
+	gpuErr(cudaMemcpy(dev_arr, arr, arrSize, cudaMemcpyHostToDevice));
+	gpuErr(cudaMemcpy(dev_rowSum, &rowSum, sumSize, cudaMemcpyHostToDevice));
 	double* dev_arr_ptr = thrust::raw_pointer_cast(&dev_arr[0]);
 	double* dev_colSum_ptr = thrust::raw_pointer_cast(&dev_colSum[0]);
 
