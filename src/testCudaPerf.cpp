@@ -101,14 +101,13 @@ int optimizeGPULib(){
 	//Allocate memory on Host
 	//gpuErr(cudaMalloc(&dev_arr, arrSize));
 	//gpuErr(cudaMalloc(&dev_rowSum, sumSize));
-	thrust::device_vector <double> dev_arr[rows][cols];
-	dev_arr = arr;
+	thrust::device_vector <double> dev_arr = arr;
 	thrust::device_vector <double> dev_colSum = colSum;
 
 	//Copy memory over to host
 	//gpuErr(cudaMemcpy(dev_arr, arr, arrSize, cudaMemcpyHostToDevice));
 	//gpuErr(cudaMemcpy(dev_rowSum, &rowSum, sumSize, cudaMemcpyHostToDevice));
-	double* dev_arr_ptr = thrust::raw_pointer_cast(&dev_arr[0][0]);
+	double* dev_arr_ptr = thrust::raw_pointer_cast(&dev_arr[0]);
 	double* dev_colSum_ptr = thrust::raw_pointer_cast(&dev_colSum[0]);
 
 	//Define grid and block
@@ -120,16 +119,14 @@ int optimizeGPULib(){
 	
 	//Copy memory
 	//gpuErr(cudaMemcpy(rowSum, dev_rowSum, sumSize, cudaMemcpyDeviceToHost));
-	thrust::host_vector <double> tmp[cols];
-	tmp = dev_colSum;
-	colSum = tmp;
+	thrust::host_vector <double> tmp = dev_colSum;
 	
 	//Stop timer
 	gpuDur = (clock() - start)/(double)CLOCKS_PER_SEC * 1000;
 
 	//Display results
 	for (int i = 0; i < 10; i++)
-		printf("%d %f\n", i, rowSum[i]);
+		printf("%d %f\n", i, dev_colSum[i]);
 
 	//Print times
 	printf("CPUTIME: %fms\n", cpuDur);
