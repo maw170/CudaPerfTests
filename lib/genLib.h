@@ -9,7 +9,7 @@
 //of situations.
 /////////////////////////////
 #include <cuda.h>
-
+#include <vector>
 //Include guards
 #ifndef CLASSCUDALIB_H
 #define CLASSCUDALIB_H
@@ -39,50 +39,29 @@ __inline__ __host__ void gpuAssert(cudaError_t code, const char* file, int line)
 #define gpuErr(ans) {gpuAssert((ans), __FILE__, __LINE__);}
 
 /////////////////////////////
-//ArrayProp
+//wrap & unwrap
 /////////////////////////////
-//Class consists of a generic array that also holds information
-//related to the dimensions of the array.  This class serves a 
-//very similar purpose to vectors, except that it is designed to
-//be used in cuda code and premptivly sets up pitch and
-//This object will be passed to a Cuda Kernel where 
-//it should still have access to all components.
+//Two short functions that wrap and unwrap vectors from 2D 
+//to 1D and back again.  Results are returned in the form of
+//passed variable.  This is a slight issue as this method 
+//requires large amounts of memory and can take a significant
+//amount of time.
 /////////////////////////////
-typedef struct ArrayProp
-{
-	//define variables
-	int rows;
-	int cols;
-	double *arr; //Defined as pointer since size is not known
-} ArrayProp;
-
-/////////////////////////////
-//OptGridBlock
-/////////////////////////////
-//Optimize the block and grid size based on the size of an array
-//The program will hopefully prevent the block and grid size from
-//being defined as magic numbers.  The program is written under the
-//assumption that the second gpu will not be used.
-//Program is designed to setup 2D array of processors and threads
-//Program also assumes that 
-/////////////////////////////
-/*int OptGridBlock (int rows, int cols){
-	//Define general variables
-	int totProc = 14; //This is the total number of processors on a single GPU.
-	int totWarp = 512; //This is the total number of warps on a single GPU
-	int perWarp = 32;
-	dim3 grid, block;
-
-	//Calculate the max number of warps (32 threads)
-	int maxWarp = ceil((rows*cols)/perWarp * 1.0);
-	
-	
-
-	return 0;
+void Unwrap (vector < vector<int> >& wrapped, vector<int>& unwrapped, int rows, int cols){
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			unwrapped[i*cols + j] = wrapped [i][j];
 }
-*/
+
+void Wrap (vector<int>& unwrapped, vector <vector <int> > & wrapped. int rows, int cols){
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			wrapped[i][j] = unwrapped[i*cols + j];
+}
+
 /////////////////////////////
 //GenTestArray
+/////////////////////////////
 //Generates massive table using nested for loops.
 //Returns the massive table and nothing else.  It is
 //assumed that the test function calculates totals. This 

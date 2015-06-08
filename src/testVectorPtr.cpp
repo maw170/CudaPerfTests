@@ -15,6 +15,7 @@
 ////////////////////////
 #include <vector>
 #include <stdio.h>
+#include <time.h>
 
 using namespace std;
 
@@ -26,18 +27,24 @@ void Wrap (vector<int>& unwrapped, vector< vector<int> >& wrapped, int rows, int
 //Main program
 
 int main(){
+	//Declare timer
+	clock_t start;
+	double duration;
+
 	//Declare sizes
-	int rows = 2;
-	int cols = 2;
+	int rows = 10000;
+	int cols = 100;
 	int tmp;
 	//Declare vector and fill with 0s
-	vector < vector<int> > myWrapVec (rows, vector<int>(5));
+	vector < vector<int> > myWrapVec (rows, vector<int>(cols));
 	vector <int> myVec (rows * cols);
 
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j<cols; j++)
 			myWrapVec[i][j] = (i+j);
 	
+	//Start timer and call unwrap
+	start = clock();
 	Unwrap(myWrapVec, myVec, rows, cols);	
 
 	//Print test value
@@ -58,6 +65,10 @@ int main(){
 	tmp = myWrapVec[0][0];
 	printf("TEST 3: %d\n", tmp);
 
+	//End timer and print result
+	duration = (clock() - start)/(double) CLOCKS_PER_SEC * 1000;
+	printf("TIME: %fms\n", duration);
+
 	return 0;
 }
 
@@ -72,6 +83,6 @@ void Unwrap (vector< vector<int> >& wrapped, vector<int>& unwrapped, int rows, i
 void Wrap (vector<int>& unwrapped, vector< vector<int> >& wrapped, int rows, int cols){
 	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < cols; j++)
-			wrapped.at(i).at(j) = unwrapped[i*cols + j];
+			wrapped[i][j] = unwrapped[i*cols + j];
 }
 
